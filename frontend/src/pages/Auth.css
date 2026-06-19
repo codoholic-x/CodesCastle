@@ -1,0 +1,143 @@
+/* ============================================
+   FILE: frontend/src/pages/Auth.css
+   PURPOSE: Shared styles for the Login and Signup pages, matching
+   the screenshots precisely: a centered white card with a serif
+   heading, labeled inputs, and a full-width dark submit button.
+   ============================================ */
+
+.auth-page {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 480px;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  padding: 40px 44px;
+  animation: auth-card-in 0.35s ease;
+}
+
+@keyframes auth-card-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.auth-heading {
+  font-family: var(--font-display);
+  font-size: 2.1rem;
+  font-weight: 700;
+  margin: 0 0 28px;
+  color: var(--color-ink);
+}
+
+.auth-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.auth-field {
+  margin-bottom: 18px;
+}
+
+.auth-field label {
+  display: block;
+  font-size: 0.88rem;
+  color: var(--color-ink-soft);
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+
+.auth-field input {
+  width: 100%;
+  padding: 11px 14px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-bg);
+  color: var(--color-ink);
+  font-size: 0.95rem;
+  transition: border-color var(--transition);
+}
+
+.auth-field input:focus {
+  border-color: var(--color-accent);
+}
+
+.auth-field input::placeholder {
+  color: #9b9da3;
+  opacity: 0.6;
+}
+
+.auth-submit {
+  width: 100%;
+  padding: 13px;
+  border-radius: var(--radius-sm);
+  background-color: var(--color-cta);
+  color: var(--color-bg);
+  font-weight: 600;
+  font-size: 0.98rem;
+  border: none;
+  margin-top: 6px;
+  transition: background-color var(--transition), transform 0.1s ease, opacity var(--transition);
+}
+
+.auth-submit:hover:not(:disabled) {
+  background-color: var(--color-cta-hover);
+  transform: translateY(-1px);
+}
+
+.auth-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.auth-switch {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 0.92rem;
+  color: var(--color-ink-soft);
+}
+
+.auth-switch a {
+  color: var(--color-accent);
+  text-decoration: underline;
+  font-weight: 600;
+}
+
+.auth-error {
+  background-color: rgba(210, 58, 58, 0.1);
+  color: var(--color-error);
+  border: 1px solid rgba(210, 58, 58, 0.25);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  font-size: 0.88rem;
+  margin-bottom: 18px;
+}
+
+@media (max-width: 540px) {
+  .auth-card {
+    padding: 30px 24px;
+  }
+
+  .auth-row {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .auth-heading {
+    font-size: 1.7rem;
+  }
+}

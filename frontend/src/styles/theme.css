@@ -1,0 +1,113 @@
+/* ============================================
+   FILE: frontend/src/styles/theme.css
+   PURPOSE: Defines the CodesCastle color & type system as CSS
+   variables, switchable between light and dark mode via the
+   data-theme attribute set by ThemeContext. Derived directly from
+   the provided screenshots: warm off-white canvas, near-black ink,
+   a soft pink badge behind the </> logo, and deep navy-black CTAs.
+   The dark mode keeps the same identity but inverts to a charcoal
+   canvas, matching the existing moon-icon toggle in the screenshots.
+   ============================================ */
+
+:root {
+  /* ---- Light theme (default, matches screenshots) ---- */
+  --color-bg: #fbfaf8;
+  --color-surface: #ffffff;
+  --color-surface-alt: #f4f2ee;
+  --color-border: #e6e2da;
+  --color-ink: #16181d;
+  --color-ink-soft: #5b5d63;
+  --color-accent: #8b2fc9; /* purple wordmark accent (image 4) */
+  --color-accent-soft: #f6def0; /* pink badge behind logo */
+  --color-accent-strong: #c026d3;
+  --color-cta: #16191f; /* near-black buttons (Sign in/up, Run) */
+  --color-cta-hover: #2a2e38;
+  --color-success: #1f9d55;
+  --color-error: #d23a3a;
+  --color-star: #f5a623;
+  --editor-bg: #1c1f26;
+  --editor-text: #e8e6e3;
+
+  --font-display: "Source Serif 4", "Georgia", serif;
+  --font-body: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", "Fira Code", monospace;
+
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 22px;
+  --shadow-card: 0 4px 24px rgba(20, 18, 30, 0.06);
+  --shadow-card-hover: 0 8px 32px rgba(20, 18, 30, 0.1);
+  --transition: 0.2s ease;
+}
+
+[data-theme="dark"] {
+  --color-bg: #14151a;
+  --color-surface: #1c1e25;
+  --color-surface-alt: #23252e;
+  --color-border: #32343f;
+  --color-ink: #f1f0ed;
+  --color-ink-soft: #a6a8b0;
+  --color-accent: #c77dff;
+  --color-accent-soft: #3a2540;
+  --color-accent-strong: #e879f9;
+  --color-cta: #f1f0ed;
+  --color-cta-hover: #ffffff;
+  --color-success: #4ade80;
+  --color-error: #f87171;
+  --color-star: #fbbf24;
+  --editor-bg: #0e0f13;
+  --editor-text: #e8e6e3;
+  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.4);
+  --shadow-card-hover: 0 8px 32px rgba(0, 0, 0, 0.55);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--color-bg);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  transition: background-color var(--transition), color var(--transition);
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Visible keyboard focus for accessibility */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+}

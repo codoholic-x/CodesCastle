@@ -1,0 +1,278 @@
+/* ============================================
+   FILE: frontend/src/pages/Practice.css
+   PURPOSE: Styles for the main code-editor / practice page, matching
+   the screenshots: a left sidebar listing numbered practice
+   questions (only when logged in / has questions) and a right panel
+   containing the dark-themed code editor, language dropdown, input
+   box, Run button, and an output console below it.
+   ============================================ */
+
+.practice-page {
+  flex: 1;
+  display: flex;
+  gap: 24px;
+  padding: 24px;
+  align-items: flex-start;
+}
+
+.question-sidebar {
+  width: 320px;
+  flex-shrink: 0;
+  max-height: calc(100vh - 140px);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-right: 4px;
+}
+
+.question-card {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 16px 18px;
+  cursor: pointer;
+  transition: box-shadow var(--transition), border-color var(--transition);
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.question-card:hover {
+  box-shadow: var(--shadow-card-hover);
+  border-color: var(--color-accent);
+}
+
+.question-card.active {
+  border-color: var(--color-accent);
+  background-color: var(--color-accent-soft);
+}
+
+.question-number {
+  font-weight: 700;
+  color: var(--color-ink-soft);
+  flex-shrink: 0;
+}
+
+.question-title {
+  color: var(--color-ink);
+  font-weight: 500;
+  font-size: 0.96rem;
+}
+
+.question-sidebar-empty {
+  background-color: var(--color-surface);
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 28px 20px;
+  text-align: center;
+  color: var(--color-ink-soft);
+  font-size: 0.92rem;
+}
+
+.editor-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.editor-shell {
+  position: relative;
+  background-color: var(--editor-bg);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+  border: 1px solid var(--color-border);
+}
+
+.editor-controls-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: flex-end;
+  margin-top: 16px;
+}
+
+.control-group label {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--color-ink-soft);
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+
+.language-select {
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+  background-color: var(--color-surface);
+  color: var(--color-ink);
+  font-size: 0.95rem;
+  min-width: 140px;
+}
+
+.input-box {
+  flex: 1;
+  min-width: 220px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+  background-color: var(--color-surface);
+  color: var(--color-ink);
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  resize: vertical;
+  min-height: 44px;
+}
+
+.run-btn {
+  padding: 11px 32px;
+  border-radius: var(--radius-sm);
+  background-color: var(--color-cta);
+  color: var(--color-bg);
+  font-weight: 600;
+  font-size: 0.96rem;
+  border: none;
+  transition: background-color var(--transition), transform 0.1s ease, opacity var(--transition);
+  flex-shrink: 0;
+}
+
+.run-btn:hover:not(:disabled) {
+  background-color: var(--color-cta-hover);
+  transform: translateY(-1px);
+}
+
+.run-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.output-console {
+  margin-top: 18px;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 18px 20px;
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  white-space: pre-wrap;
+  word-break: break-word;
+  min-height: 80px;
+}
+
+.output-console.success {
+  border-color: var(--color-success);
+}
+
+.output-console.error {
+  border-color: var(--color-error);
+  color: var(--color-error);
+}
+
+.output-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  font-family: var(--font-body);
+}
+
+.output-status {
+  font-weight: 700;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.output-status.success {
+  color: var(--color-success);
+}
+
+.output-status.error {
+  color: var(--color-error);
+}
+
+.question-feedback {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--color-border);
+  font-family: var(--font-body);
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  font-size: 0.9rem;
+  color: var(--color-ink-soft);
+}
+
+@media (max-width: 900px) {
+  .practice-page {
+    flex-direction: column;
+    padding: 16px;
+  }
+
+  .question-sidebar {
+    width: 100%;
+    max-height: 260px;
+  }
+
+  .editor-controls-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .input-box {
+    min-width: 0;
+  }
+}
+
+.viewing-question-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 12px 18px;
+  margin-bottom: 12px;
+  background-color: var(--color-accent-soft);
+  border: 1px solid var(--color-accent);
+  border-radius: var(--radius-sm);
+  font-size: 0.92rem;
+  color: var(--color-ink);
+}
+
+.viewing-question-banner strong {
+  color: var(--color-accent);
+}
+
+.back-to-editor-btn {
+  padding: 7px 16px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-accent);
+  background-color: transparent;
+  color: var(--color-accent);
+  font-weight: 600;
+  font-size: 0.85rem;
+  white-space: nowrap;
+  transition: background-color var(--transition), color var(--transition);
+}
+
+.back-to-editor-btn:hover {
+  background-color: var(--color-accent);
+  color: #fff;
+}
+
+.editor-loading-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(14, 15, 19, 0.7);
+  color: var(--editor-text);
+  font-size: 0.95rem;
+  font-weight: 500;
+  z-index: 5;
+  border-radius: var(--radius-md);
+}

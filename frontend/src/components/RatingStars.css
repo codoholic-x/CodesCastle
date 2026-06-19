@@ -1,0 +1,44 @@
+/* ============================================
+   FILE: frontend/src/components/RatingStars.css
+   PURPOSE: Styles for the star-rating display shown after a
+   successful code run, supporting half-star increments (0.5 - 5).
+   ============================================ */
+
+.rating-stars {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.rating-stars .star {
+  font-size: 1.3rem;
+  line-height: 1;
+  color: var(--color-border);
+  position: relative;
+  display: inline-block;
+}
+
+.rating-stars .star.full {
+  color: var(--color-star);
+}
+
+.rating-stars .star.half {
+  color: var(--color-border);
+}
+
+.rating-stars .star.half::before {
+  content: "★";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 50%;
+  overflow: hidden;
+  color: var(--color-star);
+}
+
+.rating-label {
+  margin-left: 8px;
+  font-size: 0.85rem;
+  color: var(--color-ink-soft);
+  font-weight: 500;
+}

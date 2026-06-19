@@ -1,0 +1,81 @@
+/* ============================================
+   FILE: frontend/src/components/ProfileModal.css
+   PURPOSE: Styles specific to the Profile popup (the shared
+   .modal-overlay / .modal-box / .modal-close-btn rules live in
+   QuestionModal.css and apply here too, since both files are
+   imported wherever their component is used).
+   ============================================ */
+
+.profile-modal-box {
+  width: 100%;
+  max-width: 420px;
+  text-align: center;
+}
+
+.profile-avatar-circle {
+  width: 72px;
+  height: 72px;
+  margin: 0 auto 16px;
+  border-radius: 50%;
+  background-color: var(--color-accent-soft);
+  color: var(--color-accent);
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.profile-name {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  margin: 0 0 2px 0;
+  color: var(--color-ink);
+}
+
+.profile-userid {
+  font-size: 0.9rem;
+  color: var(--color-accent);
+  margin: 0 0 2px 0;
+  font-weight: 600;
+}
+
+.profile-email {
+  font-size: 0.88rem;
+  color: var(--color-ink-soft);
+  margin: 0 0 24px 0;
+}
+
+.profile-stats-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.profile-stat-card {
+  background-color: var(--color-surface-alt);
+  border-radius: var(--radius-md);
+  padding: 16px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.profile-stat-value {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--color-accent);
+}
+
+.profile-stat-label {
+  font-size: 0.74rem;
+  color: var(--color-ink-soft);
+  font-weight: 500;
+}
+
+@media (max-width: 480px) {
+  .profile-stats-row {
+    grid-template-columns: 1fr;
+  }
+}
