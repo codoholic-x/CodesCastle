@@ -4,6 +4,9 @@
   "description": "Backend server for CodesCastle - an online coding practice and code compilation platform",
   "main": "src/server.js",
   "type": "commonjs",
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "scripts": {
     "start": "node src/server.js",
     "dev": "nodemon src/server.js"
