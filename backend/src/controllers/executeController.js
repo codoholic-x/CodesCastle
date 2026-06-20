@@ -1,10 +1,10 @@
 // ============================================
 // FILE: backend/src/controllers/executeController.js
 // PURPOSE: Handles the "Run" button action.
-// Sends the user's code + input to the public Piston API
-// (https://github.com/engineer-man/piston) for compilation/execution
-// of C, C++, Java, Python, and JavaScript — without needing Docker
-// on our own server, since Piston hosts the sandboxed runtimes.
+// Sends the user's code + input to the JDoodle Compiler API
+// (https://www.jdoodle.com/compiler-api/, no Docker needed on our
+// own server) for compilation/execution of C, C++, Java, Python,
+// and JavaScript (Node.js).
 //
 // On a SUCCESSFUL run (no compile/runtime errors), this also calls
 // the submission controller logic to:
@@ -12,11 +12,11 @@
 //   2. Calculate and save a star rating based on attempt count
 // ============================================
 
-// backend/src/controllers/executeController.js
 const fetch = require("node-fetch");
 const SUPPORTED_LANGUAGES = require("../config/languages");
 const { handleSuccessfulRun } = require("./submissionController");
 
+// @route POST /api/execute
 const executeCode = async (req, res, next) => {
   try {
     const { language, code, input } = req.body;
@@ -30,7 +30,7 @@ const executeCode = async (req, res, next) => {
       return res.status(400).json({ message: `Unsupported language: ${language}` });
     }
 
-    const jdoodleResponse = await fetch("https://api.jdoodle.com/v1/execute", {
+    const jdoodleResponse = await fetch(process.env.JDOODLE_API_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -44,15 +44,29 @@ const executeCode = async (req, res, next) => {
     });
 
     if (!jdoodleResponse.ok) {
-      return res.status(502).json({ message: "Code execution service unavailable" });
+      const errText = await jdoodleResponse.text();
+      console.error("[JDoodle] Request failed:", jdoodleResponse.status, errText);
+      return res.status(502).json({ message: "Code execution service is unavailable" });
     }
 
     const result = await jdoodleResponse.json();
 
-    // JDoodle response: { output, statusCode, memory, cpuTime }
-    // statusCode 200 = success, 400/500 = error
-    const stdout = result.output || "";
-    const success = result.statusCode === 200 && !stdout.includes("error");
+    // JDoodle response shape: { output, statusCode, memory, cpuTime,
+    // isCompiled, isExecutionSuccess }. statusCode stays 200 even on
+    // a compile error or timeout -- JDoodle just puts the error text
+    // into "output" in that case. When present, isCompiled/
+    // isExecutionSuccess are the more reliable signals (0 = failed).
+    // We fall back to statusCode === 200 alone when those fields
+    // aren't present in the response (depends on JDoodle's plan).
+    const rawOutput = result.output || "";
+    let success = result.statusCode === 200;
+
+    if (success && typeof result.isCompiled !== "undefined") {
+      success = result.isCompiled !== 0;
+    }
+    if (success && typeof result.isExecutionSuccess !== "undefined") {
+      success = success && result.isExecutionSuccess !== 0;
+    }
 
     let questionInfo = null;
     if (success && req.user) {
@@ -61,15 +75,15 @@ const executeCode = async (req, res, next) => {
         language,
         code,
         input: input || "",
-        output: stdout,
+        output: rawOutput,
       });
     }
 
     res.status(200).json({
       success,
-      stdout,
-      stderr: success ? "" : stdout,
-      questionInfo,
+      stdout: success ? rawOutput : "",
+      stderr: success ? "" : rawOutput,
+      questionInfo, // { question, starRating, isNew } or null
     });
   } catch (error) {
     next(error);

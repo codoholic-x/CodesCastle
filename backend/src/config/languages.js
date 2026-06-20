@@ -1,17 +1,18 @@
 // ============================================
 // FILE: backend/src/config/languages.js
 // PURPOSE: Central mapping of supported programming languages to the
-// exact "language" and "version" identifiers required by the Piston
-// execution API (https://github.com/engineer-man/piston).
+// exact "language" code and "versionIndex" required by the JDoodle
+// Compiler API (https://www.jdoodle.com/compiler-api/) -- no Docker
+// needed, just clientId/clientSecret credentials.
 //
 // HOW TO ADD A NEW LANGUAGE LATER:
-//   1. Find the language's id and version by calling GET {PISTON_API_URL}/runtimes
+//   1. Check the language code + versionIndex at
+//      https://docs.jdoodle.com/compiler-api/compiler-api#what-languages-and-versions-supported
 //   2. Add a new entry below following the same pattern.
 //   3. Add the matching option in frontend/src/constants/languages.js
 // No other file needs to change.
 // ============================================
 
-// backend/src/config/languages.js
 const SUPPORTED_LANGUAGES = {
   cpp: {
     label: "C++",
@@ -34,7 +35,7 @@ const SUPPORTED_LANGUAGES = {
     versionIndex: "4",
   },
   javascript: {
-    label: "JavaScript (Node.js)",
+    label: "JavaScript",
     jdoodle_language: "nodejs",
     versionIndex: "4",
   },
