@@ -6,13 +6,18 @@
 // own server) for compilation/execution of C, C++, Java, Python,
 // and JavaScript (Node.js).
 //
+// NOTE: Uses Node.js's built-in global `fetch` (available natively
+// since Node 18) instead of the "node-fetch" package. This avoids a
+// "Premature close" connection error that can occur with node-fetch
+// v2 on some hosting platforms (e.g. Render) when making outbound
+// HTTPS calls to third-party APIs.
+//
 // On a SUCCESSFUL run (no compile/runtime errors), this also calls
 // the submission controller logic to:
 //   1. Auto-create a practice Question from the code (if not a dup)
 //   2. Calculate and save a star rating based on attempt count
 // ============================================
 
-const fetch = require("node-fetch");
 const SUPPORTED_LANGUAGES = require("../config/languages");
 const { handleSuccessfulRun } = require("./submissionController");
 
