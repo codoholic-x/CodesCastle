@@ -54,6 +54,7 @@ const Practice = () => {
   const [modalUserRating, setModalUserRating] = useState(null);
   const [modalLoading, setModalLoading] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
+  const [modalDisplayNumber, setModalDisplayNumber] = useState(null);
 
   useEffect(() => {
     const loadQuestions = async () => {
@@ -80,9 +81,12 @@ const Practice = () => {
   const refreshQuestions = async () => {
     try {
       const data = await fetchQuestions();
-      setQuestions(data.questions || []);
+      const list = data.questions || [];
+      setQuestions(list);
+      return list;
     } catch {
       // ignore silently; sidebar simply won't update
+      return questions;
     }
   };
 
@@ -92,6 +96,13 @@ const Practice = () => {
     setModalLoading(true);
     setModalQuestion(null);
     setModalUserRating(null);
+
+    // Find this question's position in the user's own list (1-based)
+    // so the popup shows "Problem 1/2/3..." consistent with the
+    // sidebar, instead of the question's global database number.
+    const indexInUserList = questions.findIndex((q) => q._id === questionId);
+    setModalDisplayNumber(indexInUserList >= 0 ? indexInUserList + 1 : null);
+
     try {
       const data = await fetchQuestionById(questionId);
       setModalQuestion(data.question);
@@ -122,11 +133,18 @@ const Practice = () => {
     setOutput(null);
     try {
       const result = await runCode({ language, code, input });
-      setOutput(result);
+
       if (result.success && result.questionInfo) {
-        await refreshQuestions();
-        setActiveQuestionId(result.questionInfo.question?._id || null);
+        const updatedList = await refreshQuestions();
+        const qId = result.questionInfo.question?._id;
+        setActiveQuestionId(qId || null);
+
+        const indexInUserList = updatedList.findIndex((q) => q._id === qId);
+        result.questionInfo.displayNumber =
+          indexInUserList >= 0 ? indexInUserList + 1 : result.questionInfo.question?.questionNumber;
       }
+
+      setOutput(result);
     } catch (err) {
       setOutput({
         success: false,
@@ -148,13 +166,13 @@ const Practice = () => {
             No practice questions yet. Run some code successfully to generate your first one!
           </div>
         ) : (
-          questions.map((q) => (
+          questions.map((q, index) => (
             <div
               key={q._id}
               className={`question-card ${activeQuestionId === q._id ? "active" : ""}`}
               onClick={() => handleQuestionClick(q._id)}
             >
-              <span className="question-number">{q.questionNumber}.</span>
+              <span className="question-number">{index + 1}.</span>
               <span className="question-title">{q.title}</span>
             </div>
           ))
@@ -220,8 +238,8 @@ const Practice = () => {
                 <RatingStars rating={output.questionInfo.starRating} />
                 <span>
                   {output.questionInfo.isNew
-                    ? `Added as Question #${output.questionInfo.question.questionNumber} in your practice list.`
-                    : `Matched Question #${output.questionInfo.question.questionNumber}. Attempt #${output.questionInfo.attemptNumber}.`}
+                    ? `Added as Question #${output.questionInfo.displayNumber} in your practice list.`
+                    : `Matched Question #${output.questionInfo.displayNumber}. Attempt #${output.questionInfo.attemptNumber}.`}
                 </span>
               </div>
             )}
@@ -234,6 +252,7 @@ const Practice = () => {
           question={modalQuestion}
           userRating={modalUserRating}
           loading={modalLoading}
+          displayNumber={modalDisplayNumber}
           onClose={handleCloseModal}
           onTryThisQuestion={handleTryThisQuestion}
         />

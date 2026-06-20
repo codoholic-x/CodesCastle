@@ -43,7 +43,7 @@ const LANGUAGE_LABELS = {
   javascript: "JavaScript",
 };
 
-const QuestionModal = ({ question, userRating, loading, onClose, onTryThisQuestion }) => {
+const QuestionModal = ({ question, userRating, loading, displayNumber, onClose, onTryThisQuestion }) => {
   // Allow closing the modal with the Escape key
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -66,7 +66,7 @@ const QuestionModal = ({ question, userRating, loading, onClose, onTryThisQuesti
           <>
             <div className="modal-header">
               <h2>
-                Problem {question.questionNumber}
+                Problem {displayNumber ?? question.questionNumber}
                 <span className="modal-language-tag">
                   {LANGUAGE_LABELS[question.language] || question.language}
                 </span>
