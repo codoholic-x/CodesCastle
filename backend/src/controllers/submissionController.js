@@ -28,6 +28,16 @@ const { calculateStarRating, normalizeCode } = require("../utils/ratingHelper");
 const handleSuccessfulRun = async ({ userId, language, code, input, output }) => {
   const signature = normalizeCode(code);
 
+  // How many times has this user already submitted this exact
+  // (normalized) code? Determines the attempt number for rating.
+  const previousAttempts = await Submission.countDocuments({
+    user: userId,
+    language,
+    code: { $exists: true },
+  });
+
+  // We look specifically for prior submissions whose code normalizes
+  // to the same signature, to count attempts on THIS question.
   const allUserSubmissions = await Submission.find({ user: userId, language }).select("code");
   const matchingAttempts = allUserSubmissions.filter(
     (s) => normalizeCode(s.code) === signature
@@ -36,6 +46,7 @@ const handleSuccessfulRun = async ({ userId, language, code, input, output }) =>
   const attemptNumber = matchingAttempts + 1;
   const starRating = calculateStarRating(attemptNumber);
 
+  // Check if a Question already exists with this signature (avoid duplicates)
   let question = await Question.findOne({ codeSignature: signature, language });
   let isNew = false;
 
@@ -72,9 +83,21 @@ const handleSuccessfulRun = async ({ userId, language, code, input, output }) =>
 };
 
 // @route GET /api/questions
+// Returns only the practice questions that THIS logged-in user has
+// personally solved (i.e. they have at least one successful
+// Submission tied to that question). This keeps each user's sidebar
+// private to their own practice history, even though the underlying
+// Question documents are shared/de-duplicated globally for code
+// that multiple users happen to submit identically.
 const getQuestions = async (req, res, next) => {
   try {
-    const questions = await Question.find()
+    // Find every distinct question this user has a submission for.
+    const userQuestionIds = await Submission.distinct("question", {
+      user: req.user._id,
+      question: { $ne: null },
+    });
+
+    const questions = await Question.find({ _id: { $in: userQuestionIds } })
       .sort({ questionNumber: 1 })
       .select("questionNumber title language createdAt");
 
@@ -85,9 +108,11 @@ const getQuestions = async (req, res, next) => {
 };
 
 // @route GET /api/questions/:id
-// Returns the full question details, PLUS (if the requester is
-// logged in) their own best-ever and most-recent star rating for
-// this specific question -- used by the question detail popup.
+// Returns the full question details, PLUS the requester's own
+// best-ever and most-recent star rating for this specific question
+// -- used by the question detail popup. Only accessible if the
+// requesting user has personally solved this question at least
+// once (keeps each user's practice list private).
 const getQuestionById = async (req, res, next) => {
   try {
     const question = await Question.findById(req.params.id);
@@ -95,25 +120,26 @@ const getQuestionById = async (req, res, next) => {
       return res.status(404).json({ message: "Question not found" });
     }
 
-    let userRating = null;
+    // All of this user's submissions tied to this question, newest first.
+    const userSubmissions = await Submission.find({
+      user: req.user._id,
+      question: question._id,
+    }).sort({ createdAt: -1 });
 
-    if (req.user) {
-      const userSubmissions = await Submission.find({
-        user: req.user._id,
-        question: question._id,
-      }).sort({ createdAt: -1 });
-
-      if (userSubmissions.length > 0) {
-        const bestRating = Math.max(...userSubmissions.map((s) => s.starRating));
-        const mostRecent = userSubmissions[0];
-
-        userRating = {
-          best: bestRating,
-          recent: mostRecent.starRating,
-          totalAttempts: userSubmissions.length,
-        };
-      }
+    if (userSubmissions.length === 0) {
+      return res.status(403).json({
+        message: "You haven't solved this question yet, so it's not in your practice list.",
+      });
     }
+
+    const bestRating = Math.max(...userSubmissions.map((s) => s.starRating));
+    const mostRecent = userSubmissions[0];
+
+    const userRating = {
+      best: bestRating,
+      recent: mostRecent.starRating,
+      totalAttempts: userSubmissions.length,
+    };
 
     res.status(200).json({ question, userRating });
   } catch (error) {
