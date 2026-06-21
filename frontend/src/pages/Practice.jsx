@@ -173,7 +173,7 @@ const Practice = () => {
               onClick={() => handleQuestionClick(q._id)}
             >
               <span className="question-number">{index + 1}.</span>
-              <span className="question-title">{q.title}</span>
+              <span className="question-title">Problem {index + 1}</span>
             </div>
           ))
         )}
